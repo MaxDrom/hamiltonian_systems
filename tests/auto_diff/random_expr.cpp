@@ -68,7 +68,7 @@ TEST_CASE_TEMPLATE("Random expression from seed", Seed,
                     std::integral_constant<unsigned long long, 1234567>,
                     std::integral_constant<unsigned long long, 12345678>,
                     std::integral_constant<unsigned long long, 123456789>) {
-    using Expr = typename RandomExpr<Seed::value, 3>::type;
+    using Expr = typename RandomExpr<Seed::value, 5>::type;
     Expr expr{};
     auto dexpr = make_diff(expr, Variable<0>{});
     INFO("exrp=", expr.print());

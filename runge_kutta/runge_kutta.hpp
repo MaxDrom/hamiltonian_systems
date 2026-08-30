@@ -6,6 +6,7 @@
 #include <functional>
 #include <precision.hpp>
 #include <string>
+#include <type_traits>
 namespace RungeKutta
 {
     using namespace boost::multiprecision;
@@ -58,13 +59,34 @@ namespace RungeKutta
         vector<Real> buf;
         vector<Real> buf2;
     };
+    
+    template<typename Solver> requires std::is_base_of_v<ODESolver, Solver>
+    void Integrate(int n, vector<Real>& x, Real t0, Real t1, Real h, 
+                   std::function<void(Real, const vector<Real> &, vector<Real> &)> rhs, 
+                   Solver &integrator)
+    {
+        integrator.Init(rhs, n);
 
-    void Integrate(int n, vector<Real> &x, Real t0, Real t1, Real h,
-                   std::function<void(Real, const vector<Real> &, vector<Real> &)> rhs,
-                   ODESolver &integrator);
+        for(Real t = t0; t<t1; t+=h)
+        {
+            integrator.Step(t, x, h);
+        }
 
-    void Integrate(int n, vector<Real> &x, Real t0, Real t1, Real h,
+    };
+    
+    template<typename Solver> requires std::is_base_of_v<ODESolver, Solver>
+    void Integrate(int n, vector<Real>& x, Real t0, Real t1, Real h,
                    std::function<void(Real, const vector<Real> &, vector<Real> &)> rhs,
-                   ODESolver &integrator,
-                   std::function<void(Real, const vector<Real> &)> callback);
+                   Solver &integrator,
+                   std::function<void(Real, const vector<Real> &)> callback)
+    {
+        Real t = t0;
+        integrator.Init(rhs, n);
+        for(t = t0; t<t1; t+=h)
+        {
+            callback(t, x);
+            integrator.Step(t, x, h);
+        }
+        callback(t, x);
+    };
 }
