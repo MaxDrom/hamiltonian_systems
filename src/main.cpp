@@ -1,5 +1,6 @@
 #include "auto_diff_base.hpp"
 #include <concepts>
+#include <fstream>
 #include <iostream>
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/vector.hpp>
@@ -88,7 +89,7 @@ int main()
     auto r = apply_function<distance_sqr_ch>(t);
     auto z = sqrt(r + q*q);
     auto ham = p*p*Constant<0.5>{} - Constant<1.0>{}/z;
-
+    
     auto rhs = compile_system<1>(ham);
     int N = 128;
     int NSteps = 1000;
@@ -102,6 +103,8 @@ int main()
             inits[i+j*N][1] = -1 + 2.0 / (N - 1) * j;
         }
     }
+    
+    std::ofstream f("traj1.dat");
 
     for(auto i = 0; i<NSteps; i++)
     {
@@ -118,9 +121,9 @@ int main()
         {
             for (auto &v : inits[j])
             {
-                std::cout << v << " ";
+                f << v << " ";
             }
-            std::cout << '\n';
+            f << '\n';
         }
     }
 
