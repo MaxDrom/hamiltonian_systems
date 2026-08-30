@@ -68,7 +68,7 @@ int main()
     Parallel::for_i(
             [&](size_t i) -> void
             {
-            cache[i] = distance_sqr(2*std::numbers::pi/(cache.size()-1)*i);
+                cache[i] = distance_sqr(2*std::numbers::pi/(cache.size()-1)*i);
             },
             0,
             cache.size()
@@ -100,8 +100,8 @@ int main()
         Parallel::for_i(
                 [&](size_t i) -> void
                 {
-                auto diff_solver = RungeKutta::BRK(2, 3);
-                RungeKutta::Integrate(2, inits[i], 0, 2*std::numbers::pi, 0.1, rhs, diff_solver);
+                    auto diff_solver = RungeKutta::BRK(2, 3);
+                    RungeKutta::Integrate(2, inits[i], 0, 2*std::numbers::pi, 0.1, rhs, diff_solver);
                 },
                 0,
                 N*N);
