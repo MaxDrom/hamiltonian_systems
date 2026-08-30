@@ -66,30 +66,6 @@ struct Diff<Variable<Idx>, Variable<Idx2>>
     using type = Integer<0>;
 };
 
-template<IsExpression A, IsVariable Var>
-struct Diff<Sin<A>, Var> 
-{
-    using _A = typename Diff<A,Var>::type;
-
-    using type = Mul<_A,Cos<A>>;
-};
-
-template<IsExpression A, IsVariable Var>
-struct Diff<Cos<A>, Var> 
-{
-    using _A = typename Diff<A,Var>::type;
-
-    using type = Mul<_A,Mul<Integer<-1>,Sin<A>>>;
-};
-
-template<IsExpression A, IsVariable Var>
-struct Diff<Exp<A>, Var> 
-{
-    using _A = typename Diff<A,Var>::type;
-
-    using type = Mul<_A,Exp<A>>;
-};
-
 template<IsExpression A, auto Func, size_t Idx>
 struct DefaultFuncDiff : Expression<DefaultFuncDiff<A, Func, Idx>>
 {

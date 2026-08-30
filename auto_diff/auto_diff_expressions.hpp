@@ -150,7 +150,7 @@ static inline Sqrt<Value> sqrt(const Value& v)
 }
 
 template<IsExpression Value>
-using Exp = Function<Value, Function<Value, FuntionTagFromFunc<static_cast<Real(*)(Real&&)>(mp_exp)>>>;
+using Exp = Function<Value, FuntionTagFromFunc<static_cast<Real(*)(Real&&)>(mp_exp)>>;
 
 template<IsExpression Value>
 static inline Exp<Value> exp(const Value& v)

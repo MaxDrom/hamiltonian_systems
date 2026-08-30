@@ -26,3 +26,7 @@ target_include_directories(ksp_opt PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(ksp_opt Boost::headers auto_diff precision parallel newton runge_kutta mpfr gmp fmt::fmt)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/plot_scr
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+ if(PROJECT_IS_TOP_LEVEL)
+     include(CTest)
+     add_subdirectory(tests)
+endif()
