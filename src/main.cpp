@@ -1,3 +1,5 @@
+#include "auto_diff_base.hpp"
+#include <concepts>
 #include <iostream>
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/vector.hpp>
@@ -13,16 +15,17 @@
 #include <auto_diff.hpp>
 #include <auto_diff_subst.hpp>
 #include <auto_diff_squise.hpp>
+#include <utility>
 using namespace boost::numeric::ublas;
 
-    template <typename Func, std::size_t... I>
-decltype(auto) call_with_vector_impl(Real t, const vector<Real> &vec, Func f, std::index_sequence<I...>)
+template <typename Func, std::size_t... I> requires std::invocable<Func, decltype((I,Real{}))..., Real>
+decltype(auto) call_with_vector_impl(Real t, const vector<Real> &vec, Func&& f, std::index_sequence<I...>)
 {
-    return f(vec[I]..., t);
+    return std::invoke(std::forward<Func>(f), vec[I]..., t);
 }
 
-    template <size_t N, IsExpression H, size_t... Is>
-decltype(auto) compile_system(H ham, std::index_sequence<Is...>)
+template <size_t N, IsExpression H, size_t... Is>
+inline decltype(auto) _compile_system(H ham, std::index_sequence<Is...>)
 {
 
     using Q_Dots = std::tuple<decltype(make_diff(ham, Variable<Is + N>{}))...>;
@@ -32,6 +35,11 @@ decltype(auto) compile_system(H ham, std::index_sequence<Is...>)
         ((result[Is] = call_with_vector_impl(t, x, typename std::tuple_element<Is, Q_Dots>::type{}, std::make_index_sequence<2 * N>())), ...);
         ((result[Is + N] = call_with_vector_impl(t, x, typename std::tuple_element<Is, P_Dots>::type{}, std::make_index_sequence<2 * N>())), ...);
     };
+}
+
+template<size_t N, IsExpression H>
+decltype(auto) compile_system(H ham){
+    return _compile_system<N>(ham, std::make_index_sequence<N>());
 }
 
 const Real e = 0.12;
@@ -68,7 +76,7 @@ int main()
     Parallel::for_i(
             [&](size_t i) -> void
             {
-                cache[i] = distance_sqr(2*std::numbers::pi/(cache.size()-1)*i);
+            cache[i] = distance_sqr(2*std::numbers::pi/(cache.size()-1)*i);
             },
             0,
             cache.size()
@@ -81,7 +89,7 @@ int main()
     auto z = sqrt(r + q*q);
     auto ham = p*p*Constant<0.5>{} - Constant<1.0>{}/z;
 
-    auto rhs = compile_system<1>(ham, std::make_index_sequence<1>());
+    auto rhs = compile_system<1>(ham);
     int N = 128;
     int NSteps = 1000;
     auto inits = std::vector<vector<Real>>(N*N);
@@ -100,8 +108,8 @@ int main()
         Parallel::for_i(
                 [&](size_t i) -> void
                 {
-                    auto diff_solver = RungeKutta::BRK(2, 3);
-                    RungeKutta::Integrate(2, inits[i], 0, 2*std::numbers::pi, 0.1, rhs, diff_solver);
+                auto diff_solver = RungeKutta::BRK(2, 3);
+                RungeKutta::Integrate(2, inits[i], 0, 2*std::numbers::pi, 0.1, rhs, diff_solver);
                 },
                 0,
                 N*N);
