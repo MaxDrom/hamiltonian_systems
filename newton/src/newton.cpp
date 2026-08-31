@@ -1,11 +1,10 @@
-#include "newton.hpp"
-#include <Eigen/Dense>
 #include <boost/numeric/ublas/io.hpp>
 #include <boost/numeric/ublas/lu.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/vector.hpp>
 #include <functional>
 #include <iostream>
+#include <newton.hpp>
 #include <omp.h>
 #include <precision.hpp>
 using namespace boost::numeric::ublas;
@@ -34,43 +33,13 @@ void jacobi(matrix<Real> &jac, const vector<Real> &x,
 
 int solve_linear(const matrix<Real> &A, const vector<Real> &b,
                  vector<Real> &x) {
-    // Проверяем корректность размеров квадратной системы
-    if (A.size1() != A.size2() || A.size1() != b.size()) {
-        return -1; // Ошибка размерности
-    }
-
-    // Изменяем размер результирующего вектора x под размер b
-    x.resize(b.size(), false);
-
-    const int rows = static_cast<int>(A.size1());
-    const int cols = static_cast<int>(A.size2());
-
-    // Типы для маппинга матрицы (uBLAS по умолчанию использует RowMajor)
-    using EigenMatrixMapConst =
-        Eigen::Map<const Eigen::Matrix<Real, Eigen::Dynamic, Eigen::Dynamic,
-                                       Eigen::RowMajor>>;
-    // Типы для маппинга векторов
-    using EigenVectorMapConst =
-        Eigen::Map<const Eigen::Matrix<Real, Eigen::Dynamic, 1>>;
-    using EigenVectorMap = Eigen::Map<Eigen::Matrix<Real, Eigen::Dynamic, 1>>;
-
-    // Отображаем память Boost в структуры Eigen без накладных расходов на
-    // копирование
-    EigenMatrixMapConst eigen_A(&A.data()[0], rows, cols);
-    EigenVectorMapConst eigen_b(&b.data()[0], rows);
-    EigenVectorMap eigen_x(&x.data()[0], rows);
-
-    // Используем Полное Ортогональное Разложение (COD) для плохих матриц
-    Eigen::CompleteOrthogonalDecomposition<
-        Eigen::Matrix<Real, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>
-        cod(eigen_A);
-
-    // Находим псевдорешение с минимальной нормой и пишем напрямую в память
-    // вектора x
-    eigen_x = cod.solve(eigen_b);
-
-    // Метод COD успешно разрешает даже вырожденные ситуации,
-    // поэтому возвращаем 0 как маркер успешного завершения расчета.
+    matrix<Real> LU = A;
+    permutation_matrix pm(A.size1());
+    auto res = lu_factorize(LU, pm);
+    if (res != 0)
+        return res;
+    x = b;
+    lu_substitute(LU, pm, x);
     return 0;
 }
 

@@ -7,6 +7,5 @@ if(POLICY CMP0167)
 endif()
 find_package(Boost REQUIRED)
 
-find_package(Eigen3 REQUIRED)
-target_link_libraries(newton PRIVATE precision Boost::headers Eigen3::Eigen OpenMP::OpenMP_CXX)
+target_link_libraries(newton PRIVATE precision Boost::headers OpenMP::OpenMP_CXX)
 target_include_directories(newton PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
