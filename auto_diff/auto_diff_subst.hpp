@@ -1,3 +1,4 @@
+#pragma once
 #include <auto_diff_base.hpp>
 #include <auto_diff_expressions.hpp>
 namespace AutoDiff {
