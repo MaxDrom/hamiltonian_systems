@@ -3,6 +3,7 @@
 #include <auto_diff_expressions.hpp>
 #include <auto_diff_normalizer.hpp>
 #include <auto_diff_squise.hpp>
+#include <auto_diff_subst.hpp>
 
 namespace AutoDiff {
 
