@@ -1,4 +1,4 @@
-#include "auto_diff_base.hpp"
+#include <auto_diff_base.hpp>
 #include <concepts>
 #include <fstream>
 #include <iostream>
@@ -10,7 +10,6 @@
 #include <newton.hpp>
 #include <runge_kutta.hpp>
 #include <parallel.hpp>
-#include <fmt/core.h>
 #include <tuple>
 #include <cmath>
 #include <auto_diff.hpp>
@@ -105,7 +104,7 @@ int main()
         }
     }
     
-    std::ofstream f("traj1.dat");
+    std::ofstream f("out.dat");
 
     for(auto i = 0; i<NSteps; i++)
     {
