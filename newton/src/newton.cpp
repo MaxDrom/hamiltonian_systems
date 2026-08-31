@@ -72,7 +72,6 @@ int solve(vector<Real> &x,
         jacobi(jac, x, f, fx);
         int res = solve_linear(jac, fx, dx);
         if (res != 0) {
-            // std::cout<<jac<<'\n';
             if (norm_2(fx) <= std::numeric_limits<Real>::min())
                 return 0;
             else
