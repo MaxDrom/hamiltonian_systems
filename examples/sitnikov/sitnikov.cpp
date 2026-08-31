@@ -1,47 +1,20 @@
 #include <auto_diff_base.hpp>
-#include <concepts>
 #include <fstream>
 #include <iostream>
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/io.hpp>
-#include <functional>
 #include <precision.hpp>
 #include <newton.hpp>
 #include <runge_kutta.hpp>
 #include <parallel.hpp>
-#include <tuple>
 #include <cmath>
 #include <auto_diff.hpp>
 #include <auto_diff_subst.hpp>
 #include <auto_diff_squise.hpp>
-#include <utility>
 #include <numbers>
+#include <ham.hpp>
 using namespace boost::numeric::ublas;
-
-template <typename Func, std::size_t... I> requires std::invocable<Func, decltype((I,Real{}))..., Real>
-decltype(auto) call_with_vector_impl(Real t, const vector<Real> &vec, Func&& f, std::index_sequence<I...>)
-{
-    return std::invoke(std::forward<Func>(f), vec[I]..., t);
-}
-
-template <size_t N, IsExpression H, size_t... Is>
-inline decltype(auto) _compile_system(H ham, std::index_sequence<Is...>)
-{
-
-    using Q_Dots = std::tuple<decltype(make_diff(ham, Variable<Is + N>{}))...>;
-    using P_Dots = std::tuple<decltype(make_diff(-ham, Variable<Is>{}))...>;
-    return [=](Real t, const vector<Real> &x, vector<Real> &result) -> void
-    {
-        ((result[Is] = call_with_vector_impl(t, x, typename std::tuple_element<Is, Q_Dots>::type{}, std::make_index_sequence<2 * N>())), ...);
-        ((result[Is + N] = call_with_vector_impl(t, x, typename std::tuple_element<Is, P_Dots>::type{}, std::make_index_sequence<2 * N>())), ...);
-    };
-}
-
-template<size_t N, IsExpression H>
-decltype(auto) compile_system(H ham){
-    return _compile_system<N>(ham, std::make_index_sequence<N>());
-}
 
 const Real e = 0.12;
 const Real a = 1;
@@ -90,7 +63,7 @@ int main()
     auto z = sqrt(r + q*q);
     auto ham = p*p*Constant<0.5>{} - Constant<1.0>{}/z;
     
-    auto rhs = compile_system<1>(ham);
+    auto rhs = Hamiltonian::compile_system<1>(ham);
     int N = 128;
     int NSteps = 1000;
     auto inits = std::vector<vector<Real>>(N*N);
