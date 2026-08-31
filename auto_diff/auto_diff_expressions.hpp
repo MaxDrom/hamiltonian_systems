@@ -99,7 +99,7 @@ template <IsExpression Value>
 using Sin =
     Function<Value, FuntionTagFromFunc<static_cast<Real (*)(Real &&)>(mp_sin)>>;
 
-template <IsExpression Value> static inline Sin<Value> sin(const Value &v) {
+template <IsExpression Value> static Sin<Value> sin(const Value &v) {
     return {};
 }
 
@@ -107,7 +107,7 @@ template <IsExpression Value>
 using Cos =
     Function<Value, FuntionTagFromFunc<static_cast<Real (*)(Real &&)>(mp_cos)>>;
 
-template <IsExpression Value> static inline Cos<Value> cos(const Value &v) {
+template <IsExpression Value> static Cos<Value> cos(const Value &v) {
     return {};
 }
 
@@ -116,7 +116,7 @@ using Sqrt =
     Function<Value,
              FuntionTagFromFunc<static_cast<Real (*)(Real &&)>(mp_sqrt)>>;
 
-template <IsExpression Value> static inline Sqrt<Value> sqrt(const Value &v) {
+template <IsExpression Value> static Sqrt<Value> sqrt(const Value &v) {
     return {};
 }
 
@@ -124,7 +124,7 @@ template <IsExpression Value>
 using Exp =
     Function<Value, FuntionTagFromFunc<static_cast<Real (*)(Real &&)>(mp_exp)>>;
 
-template <IsExpression Value> static inline Exp<Value> exp(const Value &v) {
+template <IsExpression Value> static Exp<Value> exp(const Value &v) {
     return {};
 }
 
@@ -225,30 +225,29 @@ struct DivTag : public BinaryOpTag<DivTag> {
 template <IsExpression A, IsExpression B> using Mul = BinaryOp<A, B, MulTag>;
 
 template <IsExpression A, IsExpression B>
-constexpr static inline Mul<A, B> operator*(const Expression<A> &a,
-                                            const Expression<B> &b) {
+constexpr static Mul<A, B> operator*(const Expression<A> &a,
+                                     const Expression<B> &b) {
     return {};
 };
 
 template <IsExpression A, IsExpression B> using Div = BinaryOp<A, B, DivTag>;
 
 template <IsExpression A, IsExpression B>
-constexpr static inline Mul<A, Div<Constant<1.0>, B>>
+constexpr static Mul<A, Div<Constant<1.0>, B>>
 operator/(const Expression<A> &a, const Expression<B> &b) {
     return {};
 };
 
 template <auto Func, IsExpression A>
-constexpr static inline Function<A, FuntionTagFromFunc<Func>>
-apply_function(A a) {
+constexpr static Function<A, FuntionTagFromFunc<Func>> apply_function(A a) {
     return {};
 }
 
 template <IsExpression A, IsExpression B> using Add = BinaryOp<A, B, AddTag>;
 
 template <IsExpression A, IsExpression B>
-constexpr static inline Add<A, B> operator+(const Expression<A> &a,
-                                            const Expression<B> &b) {
+constexpr static Add<A, B> operator+(const Expression<A> &a,
+                                     const Expression<B> &b) {
     return {};
 };
 
@@ -256,13 +255,13 @@ template <IsExpression A, IsExpression B>
 using Minus = BinaryOp<A, B, MinusTag>;
 
 template <IsExpression A, IsExpression B>
-constexpr static inline Add<A, Mul<Constant<-1.0>, B>>
+constexpr static Add<A, Mul<Constant<-1.0>, B>>
 operator-(const Expression<A> &a, const Expression<B> &b) {
     return {};
 };
 
 template <IsExpression A>
-constexpr static inline Minus<Integer<0>, A> operator-(const Expression<A> &a) {
+constexpr static Minus<Integer<0>, A> operator-(const Expression<A> &a) {
     return {};
 };
 

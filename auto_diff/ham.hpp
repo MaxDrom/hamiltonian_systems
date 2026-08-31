@@ -1,4 +1,5 @@
 #pragma once
+#include "auto_diff_base.hpp"
 #include <auto_diff.hpp>
 #include <boost/numeric/ublas/vector.hpp>
 
@@ -13,7 +14,8 @@ decltype(auto)
     return std::invoke(std::forward<Func>(f), vec[I]..., t);
 }
 
-template <size_t N, IsExpression H, size_t... Is>
+template <size_t N, typename H, size_t... Is>
+    requires IsExpression<H>
 inline decltype(auto) _compile_system(H ham, std::index_sequence<Is...>) {
 
     using Q_Dots = std::tuple<decltype(make_diff(ham, Variable<Is + N>{}))...>;
@@ -30,7 +32,9 @@ inline decltype(auto) _compile_system(H ham, std::index_sequence<Is...>) {
     };
 }
 
-template <size_t N, IsExpression H> decltype(auto) compile_system(H ham) {
+template <size_t N, typename H>
+    requires IsExpression<H>
+inline decltype(auto) compile_system(H ham) {
     return _compile_system<N>(ham, std::make_index_sequence<N>());
 }
 } // namespace Hamiltonian

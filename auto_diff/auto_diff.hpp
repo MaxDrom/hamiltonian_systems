@@ -125,7 +125,7 @@ struct Diff<Function<A, FuntionTagFromFunc<Func>>, Variable<Idx>> {
 };
 
 template <IsExpression A, IsVariable Var>
-FixedPointSquise<typename Diff<A, Var>::type>::type make_diff(const A &a,
-                                                              const Var &b) {
+inline FixedPointSquise<typename Diff<A, Var>::type>::type
+make_diff(const A &a, const Var &b) {
     return {};
 };

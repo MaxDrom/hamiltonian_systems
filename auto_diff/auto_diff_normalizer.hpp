@@ -8,17 +8,17 @@ template <IsBinaryOpTag OpTag> constexpr double combine(double a, double b) {
 
 template <IsBinaryOpTag OpTag> constexpr double identity() { return 0.0; }
 
-template <> constexpr double combine<AddTag>(double a, double b) {
+template <> inline constexpr double combine<AddTag>(double a, double b) {
     return a + b;
 }
 
-template <> constexpr double combine<MulTag>(double a, double b) {
+template <> inline constexpr double combine<MulTag>(double a, double b) {
     return a * b;
 }
 
-template <> constexpr double identity<AddTag>() { return 0.0; }
+template <> inline constexpr double identity<AddTag>() { return 0.0; }
 
-template <> constexpr double identity<MulTag>() { return 1.0; }
+template <> inline constexpr double identity<MulTag>() { return 1.0; }
 
 template <typename Head, typename Tail> struct TypeList {};
 

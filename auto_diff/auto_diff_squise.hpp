@@ -26,6 +26,6 @@ template <IsExpression T> struct FixedPointSquise {
 };
 
 template <IsExpression Expr>
-inline typename FixedPointSquise<Expr>::type simplify(const Expr &expr) {
+typename FixedPointSquise<Expr>::type simplify(const Expr &expr) {
     return {};
 }
