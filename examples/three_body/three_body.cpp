@@ -4,13 +4,13 @@
 #include <ham_maker.hpp>
 #include <numbers>
 #include <runge_kutta.hpp>
+#include <precision.hpp>
 using namespace boost::numeric::ublas;
 
 int main() {
     auto body1 = Body<1.0>{};
     auto body2 = Body<1.0>{};
     auto body3 = Body<1.0>{};
-
     auto ham = make_ham(body1, body2, body3);
     auto system = Hamiltonian::compile_system<3 * 2>(ham);
     auto integrator = RungeKutta::BRK(2, 3);
