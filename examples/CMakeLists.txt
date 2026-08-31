@@ -18,3 +18,4 @@ endfunction()
 
 add_subdirectory(sitnikov)
 add_subdirectory(pendulum)
+add_subdirectory(three_body)
