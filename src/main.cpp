@@ -17,6 +17,7 @@
 #include <auto_diff_subst.hpp>
 #include <auto_diff_squise.hpp>
 #include <utility>
+#include <numbers>
 using namespace boost::numeric::ublas;
 
 template <typename Func, std::size_t... I> requires std::invocable<Func, decltype((I,Real{}))..., Real>
