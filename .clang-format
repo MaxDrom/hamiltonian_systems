@@ -5,3 +5,5 @@ IndentWidth: 4
 TabWidth: 4
 
 UseTab: Never
+
+NamespaceIndentation: Inner

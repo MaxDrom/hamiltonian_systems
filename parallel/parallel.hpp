@@ -18,33 +18,33 @@ concept BinaryOperation = requires(Op &&op, const T &a, const T &b) {
     { op(a, b) } -> std::same_as<T>;
 };
 namespace detail {
-template <typename T, typename Op, typename U>
-    requires BinaryOperation<Op, T> && IndexableContainer<U, T>
-T reduce_seq(Op &&binary_op, const U &collection, size_t start, size_t end,
-             T identity, int depth, int max_depth) {
-    if (depth > max_depth || (end - start) < 128) {
-        T result = identity;
-        for (size_t i = start; i < end; i++) {
-            result = binary_op(result, collection[i]);
+    template <typename T, typename Op, typename U>
+        requires BinaryOperation<Op, T> && IndexableContainer<U, T>
+    T reduce_seq(Op &&binary_op, const U &collection, size_t start, size_t end,
+                 T identity, int depth, int max_depth) {
+        if (depth > max_depth || (end - start) < 128) {
+            T result = identity;
+            for (size_t i = start; i < end; i++) {
+                result = binary_op(result, collection[i]);
+            }
+            return result;
         }
-        return result;
-    }
 
-    T left, right;
-    size_t mid = start + (end - start) / 2;
+        T left, right;
+        size_t mid = start + (end - start) / 2;
 #pragma omp task shared(left)
-    {
-        left = reduce_seq(std::forward<Op>(binary_op), collection, start, mid,
-                          identity, depth + 1, max_depth);
-    }
+        {
+            left = reduce_seq(std::forward<Op>(binary_op), collection, start,
+                              mid, identity, depth + 1, max_depth);
+        }
 
-    right = reduce_seq(std::forward<Op>(binary_op), collection, mid, end,
-                       identity, depth + 1, max_depth);
+        right = reduce_seq(std::forward<Op>(binary_op), collection, mid, end,
+                           identity, depth + 1, max_depth);
 
 #pragma omp taskwait
 
-    return binary_op(left, right);
-}
+        return binary_op(left, right);
+    }
 } // namespace detail
 
 template <typename T, typename Op, typename U>
