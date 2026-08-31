@@ -8,24 +8,24 @@
 template <IsExpression A> using Squise = ExpressionIterator<Squiser, A>;
 
 template <typename Current, typename Next, bool IsSame> struct FixedPointImpl {
-  using type = Current;
+    using type = Current;
 };
 
 template <typename Current, typename Next>
 struct FixedPointImpl<Current, Next, false> {
-  using _squized = typename Squise<typename Normalize<Next>::type>::type;
-  using type = typename FixedPointImpl<Next, _squized,
-                                       std::is_same_v<Next, _squized>>::type;
+    using _squized = typename Squise<typename Normalize<Next>::type>::type;
+    using type = typename FixedPointImpl<Next, _squized,
+                                         std::is_same_v<Next, _squized>>::type;
 };
 
 template <IsExpression T> struct FixedPointSquise {
-  using FirstPass = typename Squise<typename Normalize<T>::type>::type;
+    using FirstPass = typename Squise<typename Normalize<T>::type>::type;
 
-  using type =
-      typename FixedPointImpl<T, FirstPass, std::is_same_v<T, FirstPass>>::type;
+    using type = typename FixedPointImpl<T, FirstPass,
+                                         std::is_same_v<T, FirstPass>>::type;
 };
 
 template <IsExpression Expr>
 inline typename FixedPointSquise<Expr>::type simplify(const Expr &expr) {
-  return {};
+    return {};
 }

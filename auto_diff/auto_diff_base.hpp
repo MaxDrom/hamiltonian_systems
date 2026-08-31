@@ -10,30 +10,31 @@ template <typename T>
 concept IsReal = std::convertible_to<T, Real>;
 
 template <typename Derived> struct Expression {
-private:
-  inline const Derived *pimpl() const {
-    return static_cast<const Derived *>(this);
-  }
+  private:
+    inline const Derived *pimpl() const {
+        return static_cast<const Derived *>(this);
+    }
 
-public:
-  template <IsReal... Args> inline Real operator()(Args &&...x) const {
-    return pimpl()->apply_impl(std::forward<Args>(x)...);
-  }
+  public:
+    template <IsReal... Args> inline Real operator()(Args &&...x) const {
+        return pimpl()->apply_impl(std::forward<Args>(x)...);
+    }
 
-  inline std::string print() const { return pimpl()->print_impl(); }
+    inline std::string print() const { return pimpl()->print_impl(); }
 
-  inline size_t priority() const { return pimpl()->priority_impl(); }
+    inline size_t priority() const { return pimpl()->priority_impl(); }
 };
 
 template <size_t Idx> struct Variable : public Expression<Variable<Idx>> {
-  friend struct Expression<Variable<Idx>>;
+    friend struct Expression<Variable<Idx>>;
 
-private:
-  template <IsReal... Args> inline Real apply_impl(Args &&...args) const {
-    return std::get<Idx>(std::forward_as_tuple(std::forward<Args>(args)...));
-  }
-  inline std::string print_impl() const { return std::format("x_{}", Idx); }
-  inline size_t priority_impl() const { return 100; }
+  private:
+    template <IsReal... Args> inline Real apply_impl(Args &&...args) const {
+        return std::get<Idx>(
+            std::forward_as_tuple(std::forward<Args>(args)...));
+    }
+    inline std::string print_impl() const { return std::format("x_{}", Idx); }
+    inline size_t priority_impl() const { return 100; }
 };
 
 template <typename T>
@@ -48,37 +49,37 @@ template <typename T>
 concept IsVariable = is_variable_trait<std::decay_t<T>>::value;
 
 template <double Val> struct Constant : public Expression<Constant<Val>> {
-  friend struct Expression<Constant<Val>>;
+    friend struct Expression<Constant<Val>>;
 
-private:
-  template <IsReal... Args> inline Real apply_impl(Args &&...args) const {
-    return Val;
-  }
+  private:
+    template <IsReal... Args> inline Real apply_impl(Args &&...args) const {
+        return Val;
+    }
 
-  inline std::string print_impl() const { return std::format("{}", Val); }
+    inline std::string print_impl() const { return std::format("{}", Val); }
 
-  inline size_t priority_impl() const {
-    if constexpr (Val < 0)
-      return 0;
-    return 100;
-  }
+    inline size_t priority_impl() const {
+        if constexpr (Val < 0)
+            return 0;
+        return 100;
+    }
 };
 
 template <int Val> struct Integer : public Expression<Integer<Val>> {
-  friend struct Expression<Integer<Val>>;
+    friend struct Expression<Integer<Val>>;
 
-private:
-  template <IsReal... Args> inline Real apply_impl(Args &&...args) const {
-    return Val;
-  }
+  private:
+    template <IsReal... Args> inline Real apply_impl(Args &&...args) const {
+        return Val;
+    }
 
-  inline std::string print_impl() const { return std::format("{}", Val); }
+    inline std::string print_impl() const { return std::format("{}", Val); }
 
-  inline size_t priority_impl() const {
-    if constexpr (Val < 0)
-      return 0;
-    return 100;
-  }
+    inline size_t priority_impl() const {
+        if constexpr (Val < 0)
+            return 0;
+        return 100;
+    }
 };
 
 template <typename T> struct is_constant_trait : std::false_type {};
