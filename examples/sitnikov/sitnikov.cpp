@@ -15,7 +15,7 @@
 #include <precision.hpp>
 #include <runge_kutta.hpp>
 using namespace boost::numeric::ublas;
-
+using namespace AutoDiff;
 const Real e = 0.12;
 const Real a = 1;
 const Real n = pow(a, -1.5);

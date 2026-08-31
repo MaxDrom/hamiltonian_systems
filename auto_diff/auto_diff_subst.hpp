@@ -1,5 +1,7 @@
 #include <auto_diff_base.hpp>
 #include <auto_diff_expressions.hpp>
+namespace AutoDiff {
+
 template <IsExpression Expr, IsExpression Pattern, IsExpression Target>
 struct SubstWorker {
     using type = Expr;
@@ -18,3 +20,4 @@ constexpr inline typename Subst<Expr, Pattern, Target>::type
 subst(const Expr &expr, const Pattern &pattern, const Target &target) {
     return {};
 }
+} // namespace AutoDiff

@@ -8,7 +8,7 @@
 #include <runge_kutta.hpp>
 #include <vector>
 using namespace boost::numeric::ublas;
-
+using namespace AutoDiff;
 int main() {
     auto q = Variable<0>{};
     auto p = Variable<1>{};

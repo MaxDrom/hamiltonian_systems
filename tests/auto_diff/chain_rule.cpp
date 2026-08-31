@@ -4,7 +4,7 @@
 #include <auto_diff_expressions.hpp>
 #include <doctest/doctest.h>
 #include <precision.hpp>
-
+using namespace AutoDiff;
 TEST_CASE("Chain rule: d/dx sin(x^2)") {
     auto x = Variable<0>{};
     auto expr = sin(x * x);

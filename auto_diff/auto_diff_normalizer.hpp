@@ -1,7 +1,7 @@
 #pragma once
 #include "auto_diff_base.hpp"
 #include "auto_diff_expressions.hpp"
-
+namespace AutoDiff {
 template <IsBinaryOpTag OpTag> constexpr double combine(double a, double b) {
     return 0;
 }
@@ -113,3 +113,4 @@ struct Normalize<BinaryOp<L, R, MulTag>> {
         MulTag,
         typename ToFlatten<MulTag, BinaryOp<L, R, MulTag>, Nil>::type>::type;
 };
+} // namespace AutoDiff

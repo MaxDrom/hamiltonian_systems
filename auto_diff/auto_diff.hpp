@@ -4,6 +4,8 @@
 #include <auto_diff_normalizer.hpp>
 #include <auto_diff_squise.hpp>
 
+namespace AutoDiff {
+
 template <IsExpression A, IsVariable Var> struct Diff {};
 
 template <IsExpression A, IsExpression B, IsVariable Var>
@@ -65,7 +67,7 @@ struct DefaultFuncDiff : Expression<DefaultFuncDiff<A, Func, Idx>> {
     A _value;
 
     template <IsReal... Args> inline Real apply_impl(Args &&...args) const {
-        Real h = sqrt(std::numeric_limits<Real>::epsilon());
+        Real h = std::sqrt(std::numeric_limits<Real>::epsilon());
 
         auto args_tuple = std::make_tuple(args...);
 
@@ -125,7 +127,8 @@ struct Diff<Function<A, FuntionTagFromFunc<Func>>, Variable<Idx>> {
 };
 
 template <IsExpression A, IsVariable Var>
-inline FixedPointSquise<typename Diff<A, Var>::type>::type
-make_diff(const A &a, const Var &b) {
+FixedPointSquise<typename Diff<A, Var>::type>::type make_diff(const A &a,
+                                                              const Var &b) {
     return {};
 };
+} // namespace AutoDiff

@@ -5,7 +5,7 @@
 #include <format>
 #include <precision.hpp>
 #include <string>
-
+namespace AutoDiff {
 template <typename T>
 concept IsReal = std::convertible_to<T, Real>;
 
@@ -103,3 +103,4 @@ concept IsNumber = IsInteger<T> || IsConstant<T>;
 
 template <typename T>
 concept IsNotNumber = !IsNumber<T>;
+} // namespace AutoDiff

@@ -4,7 +4,7 @@
 #include <auto_diff_expressions.hpp>
 #include <doctest/doctest.h>
 #include <precision.hpp>
-
+using namespace AutoDiff;
 TEST_CASE("Partial derivative ignores other variables") {
     // f(x, y) = x^2 * y
     auto x = Variable<0>{};

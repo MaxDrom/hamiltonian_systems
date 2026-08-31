@@ -4,6 +4,7 @@
 #include <boost/numeric/ublas/vector.hpp>
 
 namespace Hamiltonian {
+using namespace AutoDiff;
 using namespace boost::numeric::ublas;
 template <typename Func, std::size_t... I>
     requires std::invocable<Func, decltype((I, Real{}))..., Real>
@@ -34,7 +35,7 @@ inline decltype(auto) _compile_system(H ham, std::index_sequence<Is...>) {
 
 template <size_t N, typename H>
     requires IsExpression<H>
-inline decltype(auto) compile_system(H ham) {
+decltype(auto) compile_system(H ham) {
     return _compile_system<N>(ham, std::make_index_sequence<N>());
 }
 } // namespace Hamiltonian

@@ -1,7 +1,7 @@
 #pragma once
 #include <auto_diff_base.hpp>
 #include <auto_diff_expressions.hpp>
-
+namespace AutoDiff {
 template <IsExpression A> struct Squiser {
     using type = A;
 };
@@ -178,3 +178,4 @@ template <IsExpression A> struct Squiser<Mul<Sqrt<A>, Sqrt<A>>> {
 template <IsExpression A> struct Squiser<Mul<Sqrt<A>, Div<Constant<1.0>, A>>> {
     using type = Div<Constant<1.0>, Sqrt<A>>;
 };
+} // namespace AutoDiff

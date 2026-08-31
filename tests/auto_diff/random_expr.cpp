@@ -5,7 +5,7 @@
 #include <auto_diff_expressions.hpp>
 #include <doctest/doctest.h>
 #include <precision.hpp>
-
+using namespace AutoDiff;
 template <unsigned long long Seed> struct CTRand {
     static constexpr unsigned long long value =
         (Seed * 6364136223846793005ULL + 1442695040888963407ULL);

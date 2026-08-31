@@ -3,6 +3,7 @@
 #include <precision.hpp>
 #include <utility>
 
+namespace AutoDiff {
 template <typename Derived> struct BinaryOpTag {
   private:
     inline const Derived *pimpl() const {
@@ -310,3 +311,4 @@ constexpr decltype(auto) newton_expr(Expr expr, Variable<Idx> var, Init init) {
     auto expr1 = var - expr / df;
     return recursive_subst<N_iters>(expr1, var, init);
 }
+} // namespace AutoDiff

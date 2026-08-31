@@ -3,7 +3,7 @@
 #include <auto_diff.hpp>
 #include <doctest/doctest.h>
 #include <precision.hpp>
-
+using namespace AutoDiff;
 TEST_CASE("Derivative of constant is zero") {
     auto expr = Constant<5.0>{};
     auto x = Variable<0>{};

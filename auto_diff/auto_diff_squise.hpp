@@ -4,6 +4,7 @@
 #include <auto_diff_normalizer.hpp>
 #include <auto_diff_squiser_rules.hpp>
 #include <type_traits>
+namespace AutoDiff {
 
 template <IsExpression A> using Squise = ExpressionIterator<Squiser, A>;
 
@@ -29,3 +30,4 @@ template <IsExpression Expr>
 typename FixedPointSquise<Expr>::type simplify(const Expr &expr) {
     return {};
 }
+} // namespace AutoDiff

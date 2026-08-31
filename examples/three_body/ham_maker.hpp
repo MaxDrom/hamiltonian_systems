@@ -3,6 +3,8 @@
 #include <auto_diff_base.hpp>
 #include <auto_diff_expressions.hpp>
 
+struct Nil {};
+
 template <typename Head, typename Tail> struct List {};
 
 template <double mass> struct Body {};
@@ -79,25 +81,26 @@ using MakeBodyList_t = typename MakeBodyList<Args...>::type;
 template <typename List, size_t N_Bodies> struct MakeKineticPart {};
 
 template <size_t N_Bodies> struct MakeKineticPart<Nil, N_Bodies> {
-    using type = Constant<0.0>;
+    using type = AutoDiff::Constant<0.0>;
 };
 
 template <size_t Idx, double Mass, typename Tail, size_t N_Bodies>
 struct MakeKineticPart<List<BodyEntry<Idx, Mass>, Tail>, N_Bodies> {
     static decltype(auto) _make_part() {
+        using namespace AutoDiff;
         auto _px = Variable<2 * N_Bodies + 2 * Idx>{};
         auto _py = Variable<2 * N_Bodies + 2 * Idx + 1>{};
         return (_px * _px + _py * _py) * Constant<1.0 / (2 * Mass)>{};
     }
     using _part_type = decltype(_make_part());
-    using type =
-        Add<_part_type, typename MakeKineticPart<Tail, N_Bodies>::type>;
+    using type = AutoDiff::Add<_part_type,
+                               typename MakeKineticPart<Tail, N_Bodies>::type>;
 };
 
 template <typename List, size_t N_Bodies> struct MakePotentialPart {};
 
 template <size_t N_Bodies> struct MakePotentialPart<Nil, N_Bodies> {
-    using type = Constant<0.0>;
+    using type = AutoDiff::Constant<0.0>;
 };
 
 template <size_t i, size_t j, double Mass_i, double Mass_j, typename Tail,
@@ -106,6 +109,7 @@ struct MakePotentialPart<
     List<PairEntry<BodyEntry<i, Mass_i>, BodyEntry<j, Mass_j>>, Tail>,
     N_Bodies> {
     static decltype(auto) _make_part() {
+        using namespace AutoDiff;
         auto _qix = Variable<2 * i>{};
         auto _qiy = Variable<2 * i + 1>{};
         auto _qjx = Variable<2 * j>{};
@@ -116,7 +120,8 @@ struct MakePotentialPart<
     }
     using _part_type = decltype(_make_part());
     using type =
-        Add<_part_type, typename MakePotentialPart<Tail, N_Bodies>::type>;
+        AutoDiff::Add<_part_type,
+                      typename MakePotentialPart<Tail, N_Bodies>::type>;
 };
 
 template <double... Masses> decltype(auto) make_ham(Body<Masses>... args) {

@@ -6,7 +6,7 @@
 #include <precision.hpp>
 #include <runge_kutta.hpp>
 using namespace boost::numeric::ublas;
-
+using namespace AutoDiff;
 int main() {
     auto body1 = Body<1.0>{};
     auto body2 = Body<1.0>{};
