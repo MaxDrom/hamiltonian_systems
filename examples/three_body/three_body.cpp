@@ -3,8 +3,8 @@
 #include <ham.hpp>
 #include <ham_maker.hpp>
 #include <numbers>
-#include <runge_kutta.hpp>
 #include <precision.hpp>
+#include <runge_kutta.hpp>
 using namespace boost::numeric::ublas;
 
 int main() {
@@ -30,8 +30,8 @@ int main() {
     inits[11] = 0.4323657300; // py3
     std::ofstream f("traj.dat");
 
-    RungeKutta::Integrate(12, inits, 0, 2 * std::numbers::pi / 3, 0.001, system,
-                          integrator,
+    RungeKutta::Integrate(12, inits, 0, 2.01 * std::numbers::pi / 3, 0.001,
+                          system, integrator,
                           [&](Real t, const vector<Real> &x) -> void {
                               for (auto &v : x)
                                   f << v << " ";
