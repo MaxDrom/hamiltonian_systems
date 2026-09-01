@@ -17,7 +17,7 @@ template <IsExpression A, IsExpression Pattern, IsExpression Target>
 using Subst = ExpressionIterator<SubstWorker, A, Pattern, Target>;
 
 template <IsExpression Expr, IsExpression Pattern, IsExpression Target>
-constexpr inline typename Subst<Expr, Pattern, Target>::type
+constexpr typename Subst<Expr, Pattern, Target>::type
 subst(const Expr &expr, const Pattern &pattern, const Target &target) {
     return {};
 }

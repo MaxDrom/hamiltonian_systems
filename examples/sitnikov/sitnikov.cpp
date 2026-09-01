@@ -16,11 +16,12 @@
 #include <runge_kutta.hpp>
 using namespace boost::numeric::ublas;
 using namespace AutoDiff;
+
 const Real e = 0.12;
 const Real a = 1;
 const Real n = pow(a, -1.5);
 vector<Real> cache = vector<Real>(10000);
-inline Real distance_sqr(Real t) {
+Real distance_sqr(Real t) {
     auto M = n * t;
     auto E = M;
 
@@ -31,7 +32,7 @@ inline Real distance_sqr(Real t) {
     return r * r;
 }
 
-inline Real distance_sqr_ch(Real t) {
+Real distance_sqr_ch(Real t) {
     if (t >= 2 * std::numbers::pi)
         t = t - 2 * std::numbers::pi;
     auto M = n * t / (2 * std::numbers::pi) * (cache.size() - 1);
@@ -73,9 +74,9 @@ int main() {
     for (auto i = 0; i < NSteps; i++) {
         Parallel::for_i(
             [&](size_t i) -> void {
-                auto diff_solver = RungeKutta::BRK(2, 3);
-                RungeKutta::Integrate(2, inits[i], 0, 2 * std::numbers::pi, 0.1,
-                                      rhs, diff_solver);
+                auto diff_solver = RungeKutta::BRK<2, rhs>(2, 3);
+                RungeKutta::Integrate(inits[i], 0, 2 * std::numbers::pi, 0.1,
+                                      diff_solver);
             },
             0, N *N);
         std::cerr << std::format("\r{:.2f}%", (Real)i / (NSteps - 1) * 100);

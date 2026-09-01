@@ -34,9 +34,9 @@ int main() {
     auto results = std::vector<std::vector<vector<Real>>>(N);
     Parallel::for_i(
         [&](size_t i) -> void {
-            auto integrator = RungeKutta::BRK(2, 3);
-            RungeKutta::Integrate(2, inits[i], 0, 2 * std::numbers::pi, 0.001,
-                                  rhs, integrator,
+            auto integrator = RungeKutta::BRK<2, rhs>(2, 3);
+            RungeKutta::Integrate(inits[i], 0, 2 * std::numbers::pi, 0.001,
+                                  integrator,
                                   [&](Real t, const vector<Real> &x) -> void {
                                       results[i].push_back(x);
                                   });
