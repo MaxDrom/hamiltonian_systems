@@ -1,18 +1,12 @@
 #pragma once
-#include "newton.hpp"
-#include <boost/multiprecision/cpp_bin_float.hpp>
-#include <boost/multiprecision/cpp_dec_float.hpp>
+#include "odesolver.hpp"
+#include "rk4.hpp"
 #include <boost/numeric/ublas/io.hpp>
-#include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/matrix_proxy.hpp>
-#include <boost/numeric/ublas/vector.hpp>
 #include <fstream>
+#include <newton.hpp>
 #include <precision.hpp>
-#include <string>
-#include <type_traits>
 namespace RungeKutta {
-using namespace boost::multiprecision;
-using namespace boost::numeric::ublas;
 namespace detail {
     inline Real Legandre(Real x, int k) {
         if (k == 0)
@@ -36,48 +30,26 @@ namespace detail {
     }
 
 } // namespace detail
-class ODESolver {
+template <size_t n, typename Rhs>
+    requires IsRhs<Rhs>
+class BRK {
   public:
-    virtual void Init() = 0;
-    virtual void Step(Real t, vector<Real> &x, Real h) = 0;
-};
-template <size_t n, auto _rhs> class RK4 final : public ODESolver {
-  public:
-    RK4() {};
-    void Init() override {
-        _n = n;
-        k1 = vector<Real>(n);
-        k2 = vector<Real>(n);
-        k3 = vector<Real>(n);
-        k4 = vector<Real>(n);
-    }
-    void Step(Real t, vector<Real> &x, Real h) override {
-        _rhs(t, x, k1);
-        _rhs(t + h / 2, x + h / 2 * k1, k2);
-        _rhs(t + h / 2, x + h / 2 * k2, k3);
-        _rhs(t + h, x + h * k3, k4);
-        x += h * (k1 + 2 * (k2 + k3) + k4) / 6;
-    }
-
-  private:
-    int _n;
-    vector<Real> k1;
-    vector<Real> k2;
-    vector<Real> k3;
-    vector<Real> k4;
-};
-template <size_t n, auto _rhs> class BRK final : public ODESolver {
-  public:
-    BRK(std::string path_to_data, int s) {
+    BRK(std::string path_to_data, int s, Rhs &&rhs)
+        : _rk4{std::forward<Rhs>(rhs)}, _rhs{std::forward<Rhs>(rhs)}, buf{n},
+          buf2{n} {
         _s = s;
         std::ifstream f(path_to_data);
         f >> c;
         f >> A;
         f >> b;
         f >> L;
-        _rk4 = RK4<n, _rhs>();
+
+        K = matrix<Real>(n, c.size());
+        y = matrix<Real>(n, c.size());
     }
-    BRK(int k, int s) {
+    BRK(int k, int s, Rhs &&rhs)
+        : _rk4{std::forward<Rhs>(rhs)}, _rhs{std::forward<Rhs>(rhs)}, buf{n},
+          buf2{n} {
         _s = s;
         auto N = k;
         vector<Real> roots1(N);
@@ -124,15 +96,10 @@ template <size_t n, auto _rhs> class BRK final : public ODESolver {
         this->A = trans(A);
         this->b = b;
         this->L = L;
-    }
-    void Init() override {
-        _first_step = true;
         K = matrix<Real>(n, c.size());
         y = matrix<Real>(n, c.size());
-        buf = vector<Real>(n);
-        buf2 = vector<Real>(n);
     }
-    void Step(Real t, vector<Real> &x, Real h) override {
+    void Step(Real t, vector<Real> &x, Real h) {
         {
             if (_first_step) {
                 Prepare(t, x, h);
@@ -177,53 +144,44 @@ template <size_t n, auto _rhs> class BRK final : public ODESolver {
             x = x + h * prod(K, b);
         }
     }
+    void Reset() { _first_step = true; }
 
   private:
     void Prepare(Real t, const vector<Real> &x, Real h) {
         y = matrix<Real>(n, c.size());
 
         for (size_t i = 0; i < c.size(); i++) {
-            _rk4.Init();
-
             buf = x;
 
             _rk4.Step(t, buf, c(i) * h);
             column(y, i) = buf;
         }
     }
+
+    RK4<n, Rhs> _rk4;
+    using CleanRhs = std::unwrap_ref_decay_t<Rhs>;
+    CleanRhs _rhs;
+
     matrix<Real> y;
     matrix<Real> K;
     matrix<Real> A;
     matrix<Real> L;
     vector<Real> b;
     vector<Real> c;
-    RK4<n, _rhs> _rk4;
     int _s;
-    bool _first_step;
+    bool _first_step = true;
     vector<Real> buf;
     vector<Real> buf2;
 };
 
-template <typename Solver>
-    requires std::is_base_of_v<ODESolver, Solver>
-void Integrate(vector<Real> &x, Real t0, Real t1, Real h, Solver &integrator) {
-    integrator.Init();
-
-    for (Real t = t0; t < t1; t += h) {
-        integrator.Step(t, x, h);
-    }
-};
-
-template <typename Solver>
-    requires std::is_base_of_v<ODESolver, Solver>
-void Integrate(vector<Real> &x, Real t0, Real t1, Real h, Solver &integrator,
-               std::function<void(Real, const vector<Real> &)> callback) {
-    Real t = t0;
-    integrator.Init();
-    for (t = t0; t < t1; t += h) {
-        callback(t, x);
-        integrator.Step(t, x, h);
-    }
-    callback(t, x);
-};
+template <size_t n, typename Rhs>
+    requires IsRhs<Rhs>
+auto make_brk(int k, int s, Rhs &&rhs) {
+    return BRK<n, Rhs>(k, s, std::forward<Rhs>(rhs));
+}
+template <size_t n, typename Rhs>
+    requires IsRhs<Rhs>
+auto make_brk(std::string path_to_data, int s, Rhs &&rhs) {
+    return BRK<n, Rhs>(path_to_data, s, std::forward<Rhs>(rhs));
+}
 } // namespace RungeKutta

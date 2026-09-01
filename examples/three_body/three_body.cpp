@@ -4,7 +4,7 @@
 #include <ham_maker.hpp>
 #include <numbers>
 #include <precision.hpp>
-#include <runge_kutta.hpp>
+#include <runge_kutta/brk.hpp>
 using namespace boost::numeric::ublas;
 using namespace AutoDiff;
 int main() {
@@ -13,7 +13,7 @@ int main() {
     auto body3 = Body<1.0>{};
     auto ham = make_ham(body1, body2, body3);
     auto system = Hamiltonian::compile_system<3 * 2>(ham);
-    auto integrator = RungeKutta::BRK<12, system>(2, 3);
+    auto integrator = RungeKutta::make_brk<12>(2, 3, system);
     auto inits = vector<Real>(12);
     inits[0] = 0.97000436;  // x1
     inits[1] = -0.24308753; // y1

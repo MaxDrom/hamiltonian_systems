@@ -13,7 +13,7 @@
 #include <numbers>
 #include <parallel.hpp>
 #include <precision.hpp>
-#include <runge_kutta.hpp>
+#include <runge_kutta/brk.hpp>
 using namespace boost::numeric::ublas;
 using namespace AutoDiff;
 
@@ -74,7 +74,7 @@ int main() {
     for (auto i = 0; i < NSteps; i++) {
         Parallel::for_i(
             [&](size_t i) -> void {
-                auto diff_solver = RungeKutta::BRK<2, rhs>(2, 3);
+                auto diff_solver = RungeKutta::make_brk<2>(2, 3, rhs);
                 RungeKutta::Integrate(inits[i], 0, 2 * std::numbers::pi, 0.1,
                                       diff_solver);
             },

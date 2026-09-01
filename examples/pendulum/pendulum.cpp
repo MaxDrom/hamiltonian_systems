@@ -5,7 +5,7 @@
 #include <ham.hpp>
 #include <numbers>
 #include <parallel.hpp>
-#include <runge_kutta.hpp>
+#include <runge_kutta/brk.hpp>
 #include <vector>
 using namespace boost::numeric::ublas;
 using namespace AutoDiff;
@@ -34,7 +34,7 @@ int main() {
     auto results = std::vector<std::vector<vector<Real>>>(N);
     Parallel::for_i(
         [&](size_t i) -> void {
-            auto integrator = RungeKutta::BRK<2, rhs>(2, 3);
+            auto integrator = RungeKutta::make_brk<2>(2, 3, rhs);
             RungeKutta::Integrate(inits[i], 0, 2 * std::numbers::pi, 0.001,
                                   integrator,
                                   [&](Real t, const vector<Real> &x) -> void {
