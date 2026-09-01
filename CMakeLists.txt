@@ -14,6 +14,7 @@ add_subdirectory(newton)
 add_subdirectory(runge_kutta)
 add_subdirectory(parallel)
 add_subdirectory(auto_diff)
+add_subdirectory(yoshida)
 
 if(PROJECT_IS_TOP_LEVEL)
      include(CTest)
