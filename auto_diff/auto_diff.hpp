@@ -68,7 +68,7 @@ struct DefaultFuncDiff : Expression<DefaultFuncDiff<A, Func, Idx>> {
     A _value;
 
     template <IsReal... Args> inline Real apply_impl(Args &&...args) const {
-        Real h = std::sqrt(std::numeric_limits<Real>::epsilon());
+        Real h = mp_sqrt(std::numeric_limits<Real>::epsilon());
 
         auto args_tuple = std::make_tuple(args...);
 

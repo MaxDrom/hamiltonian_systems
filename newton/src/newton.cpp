@@ -9,7 +9,6 @@
 #include <precision.hpp>
 using namespace boost::numeric::ublas;
 namespace Newton {
-using namespace boost::multiprecision;
 void jacobi(matrix<Real> &jac, const vector<Real> &x,
             std::function<void(const vector<Real> &, vector<Real> &)> f,
             const vector<Real> &f_x) {
@@ -98,7 +97,7 @@ int solve(Real &x, std::function<Real(Real)> f) {
         dx = -fx / df;
         x = x + dx;
 
-    } while (abs(dx) > 10 * std::max(hh, abs(x) * hh));
+    } while (abs(dx) > 10 * mp_max(hh, abs(x) * hh));
 
     return 0;
 }
@@ -135,7 +134,7 @@ Real find_minimum(Real a, Real b, std::function<Real(Real)> f) {
 
         x = (a + b) / 2;
 
-    } while ((b - a) > std::max(eps, abs(x) * eps));
+    } while ((b - a) > mp_max(eps, abs(x) * eps));
 
     return x;
 }

@@ -25,7 +25,7 @@ const Real n = pow(a, -1.5);
 vector<Real> cache = vector<Real>(10000);
 Real distance_sqr(Real t) {
     auto M = n * t;
-    auto E = M;
+    Real E = M;
 
     for (auto i = 0; i < 50; i++)
         E = E - (E - M - e * sin(E)) / (1 - e * cos(E));
@@ -81,7 +81,7 @@ int main() {
                                       diff_solver);
             },
             0, N *N);
-        std::cerr << std::format("\r{:.2f}%", (Real)i / (NSteps - 1) * 100);
+        std::cerr << std::format("\r{:.2f}%", (double)i / (NSteps - 1) * 100);
         for (size_t j = 0; j < inits.size(); j++) {
             for (auto &v : inits[j]) {
                 f << v << " ";

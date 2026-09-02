@@ -10,7 +10,8 @@ namespace detail {
     template <size_t order> class YoshidaCoeffs {
       public:
         inline static const std::tuple<Real, Real> values = []() {
-            Real x1 = Real(1.0) / (2 - mp_pow(2, Real(1) / Real(order - 1)));
+            Real x1 =
+                Real(1.0) / (2 - mp_pow(Real(2), Real(1) / Real(order - 1)));
             Real x0 = Real(1) - 2 * x1;
 
             for (size_t i = 0; i < 10; i++) {
@@ -34,7 +35,7 @@ namespace detail {
         using _LeapFrog = LeapFrog<h1_solver, h2_solver>;
 
         Real Step(Real t, vector<Real> &x, Real h, const _LeapFrog &leapfrog) {
-            auto values = YoshidaCoeffs<order>::values;
+            const auto &values = YoshidaCoeffs<order>::values;
             auto x0 = std::get<0>(values);
             auto x1 = std::get<1>(values);
             auto h0 = x0 * h;

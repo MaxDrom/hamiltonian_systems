@@ -2,7 +2,6 @@
 #include <boost/numeric/ublas/vector.hpp>
 #include <precision.hpp>
 namespace RungeKutta {
-using namespace boost::multiprecision;
 using namespace boost::numeric::ublas;
 template <typename Func>
 concept IsRhs =
