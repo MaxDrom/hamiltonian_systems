@@ -5,8 +5,10 @@
 #include <ham.hpp>
 #include <numbers>
 #include <parallel.hpp>
-#include <runge_kutta/brk.hpp>
 #include <vector>
+#include <yoshida/leapfrog.hpp>
+#include <yoshida/leapfrog_extension.hpp>
+#include <yoshida/yoshida.hpp>
 using namespace boost::numeric::ublas;
 using namespace AutoDiff;
 int main() {
@@ -14,7 +16,6 @@ int main() {
     auto p = Variable<1>{};
     constexpr double omega = 2 * std::numbers::pi;
     auto ham = p * p * Constant<0.5>{} - cos(Constant<omega>{} * q);
-    auto rhs = Hamiltonian::compile_system<1>(ham);
 
     int N = 20;
     auto inits = std::vector<vector<Real>>(N);
@@ -34,7 +35,8 @@ int main() {
     auto results = std::vector<std::vector<vector<Real>>>(N);
     Parallel::for_i(
         [&](size_t i) -> void {
-            auto integrator = RungeKutta::make_brk<2>(2, 3, rhs);
+            auto leapfrog = Yoshida::make_leapfrog_for_sep<1>(ham);
+            auto integrator = Yoshida::make_yoshida_from_leapfrog<4>(leapfrog);
             RungeKutta::Integrate(inits[i], 0, 2 * std::numbers::pi, 0.001,
                                   integrator,
                                   [&](Real t, const vector<Real> &x) -> void {

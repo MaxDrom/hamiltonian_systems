@@ -94,22 +94,22 @@ concept HasAnalyticalDiff =
     requires { typename AnalyticalDiff<A, Func>::type; };
 
 template <IsExpression A>
-struct AnalyticalDiff<A, static_cast<Real (*)(Real &&)>(mp_sqrt)> {
+struct AnalyticalDiff<A, static_cast<Real (*)(Real)>(mp_sqrt)> {
     using type = Mul<Constant<0.5>, Div<Constant<1.0>, Sqrt<A>>>;
 };
 
 template <IsExpression A>
-struct AnalyticalDiff<A, static_cast<Real (*)(Real &&)>(mp_cos)> {
+struct AnalyticalDiff<A, static_cast<Real (*)(Real)>(mp_cos)> {
     using type = Mul<Integer<-1>, Sin<A>>;
 };
 
 template <IsExpression A>
-struct AnalyticalDiff<A, static_cast<Real (*)(Real &&)>(mp_sin)> {
+struct AnalyticalDiff<A, static_cast<Real (*)(Real)>(mp_sin)> {
     using type = Cos<A>;
 };
 
 template <IsExpression A>
-struct AnalyticalDiff<A, static_cast<Real (*)(Real &&)>(mp_exp)> {
+struct AnalyticalDiff<A, static_cast<Real (*)(Real)>(mp_exp)> {
     using type = Exp<A>;
 };
 

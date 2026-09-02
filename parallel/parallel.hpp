@@ -30,7 +30,8 @@ namespace detail {
             return result;
         }
 
-        T left, right;
+        T left = identity;
+        T right = identity;
         size_t mid = start + (end - start) / 2;
 #pragma omp task shared(left)
         {

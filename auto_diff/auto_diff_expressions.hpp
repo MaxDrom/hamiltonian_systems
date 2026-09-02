@@ -98,7 +98,7 @@ struct Function : Expression<Function<A, FuncTag>> {
 
 template <IsExpression Value>
 using Sin =
-    Function<Value, FuntionTagFromFunc<static_cast<Real (*)(Real &&)>(mp_sin)>>;
+    Function<Value, FuntionTagFromFunc<static_cast<Real (*)(Real)>(mp_sin)>>;
 
 template <IsExpression Value> static Sin<Value> sin(const Value &v) {
     return {};
@@ -106,7 +106,7 @@ template <IsExpression Value> static Sin<Value> sin(const Value &v) {
 
 template <IsExpression Value>
 using Cos =
-    Function<Value, FuntionTagFromFunc<static_cast<Real (*)(Real &&)>(mp_cos)>>;
+    Function<Value, FuntionTagFromFunc<static_cast<Real (*)(Real)>(mp_cos)>>;
 
 template <IsExpression Value> static Cos<Value> cos(const Value &v) {
     return {};
@@ -114,8 +114,7 @@ template <IsExpression Value> static Cos<Value> cos(const Value &v) {
 
 template <IsExpression Value>
 using Sqrt =
-    Function<Value,
-             FuntionTagFromFunc<static_cast<Real (*)(Real &&)>(mp_sqrt)>>;
+    Function<Value, FuntionTagFromFunc<static_cast<Real (*)(Real)>(mp_sqrt)>>;
 
 template <IsExpression Value> static Sqrt<Value> sqrt(const Value &v) {
     return {};
@@ -123,7 +122,7 @@ template <IsExpression Value> static Sqrt<Value> sqrt(const Value &v) {
 
 template <IsExpression Value>
 using Exp =
-    Function<Value, FuntionTagFromFunc<static_cast<Real (*)(Real &&)>(mp_exp)>>;
+    Function<Value, FuntionTagFromFunc<static_cast<Real (*)(Real)>(mp_exp)>>;
 
 template <IsExpression Value> static Exp<Value> exp(const Value &v) {
     return {};

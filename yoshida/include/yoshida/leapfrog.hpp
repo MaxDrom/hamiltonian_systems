@@ -13,13 +13,15 @@ concept IsSolverFunctor = requires(F f, Real t, vector<Real> &x, Real h) {
 };
 template <typename h1_solver, typename h2_solver>
     requires IsSolverFunctor<h1_solver> && IsSolverFunctor<h2_solver>
-class LeapFrog {
+struct LeapFrog {
     LeapFrog(h1_solver &&h1, h2_solver &&h2)
         : _h1{std::forward<h1_solver>(h1)}, _h2{std::forward<h2_solver>(h2)} {}
-    void Step(Real t, vector<Real> &x, Real h) {
-        _h1(t, x, h * Real(0.5));
-        _h2(t, x, h);
-        _h1(t, x, h * Real(0.5));
+    void Step(Real t, vector<Real> &x, Real h) const {
+        auto h_half = h * Real(0.5);
+        auto t_mid = t + h_half;
+        _h1(t, x, h_half);
+        _h2(t_mid, x, h);
+        _h1(t_mid, x, h_half);
     }
 
   private:

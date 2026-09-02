@@ -6,5 +6,5 @@ if(POLICY CMP0167)
 endif()
 find_package(Boost REQUIRED)
 
-target_link_libraries(yoshida INTERFACE runge_kutta precision Boost::headers OpenMP::OpenMP_CXX)
+target_link_libraries(yoshida INTERFACE runge_kutta auto_diff precision Boost::headers OpenMP::OpenMP_CXX)
 target_include_directories(yoshida INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
