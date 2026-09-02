@@ -13,7 +13,9 @@
 #include <numbers>
 #include <parallel.hpp>
 #include <precision.hpp>
-#include <runge_kutta/brk.hpp>
+#include <yoshida/leapfrog.hpp>
+#include <yoshida/leapfrog_extension.hpp>
+#include <yoshida/yoshida.hpp>
 using namespace boost::numeric::ublas;
 using namespace AutoDiff;
 
@@ -57,7 +59,6 @@ int main() {
     auto z = sqrt(r + q * q);
     auto ham = p * p * Constant<0.5>{} - Constant<1.0>{} / z;
 
-    auto rhs = Hamiltonian::compile_system<1>(ham);
     int N = 128;
     int NSteps = 1000;
     auto inits = std::vector<vector<Real>>(N * N);
@@ -74,7 +75,8 @@ int main() {
     for (auto i = 0; i < NSteps; i++) {
         Parallel::for_i(
             [&](size_t i) -> void {
-                auto diff_solver = RungeKutta::make_brk<2>(2, 3, rhs);
+                auto diff_solver = Yoshida::make_yoshida_from_leapfrog<4>(
+                    Yoshida::make_leapfrog_for_sep<1>(ham));
                 RungeKutta::Integrate(inits[i], 0, 2 * std::numbers::pi, 0.1,
                                       diff_solver);
             },
