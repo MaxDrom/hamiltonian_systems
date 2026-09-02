@@ -1,7 +1,7 @@
 #pragma once
 #include <boost/math/constants/constants.hpp>
 #ifndef USE_MULTIPRECISION
-using Real = long double;
+using Real = double;
 inline Real mp_sin(Real value) { return std::sin(value); }
 
 inline Real mp_cos(Real value) { return std::cos(value); }
