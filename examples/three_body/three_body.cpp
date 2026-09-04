@@ -11,10 +11,10 @@ int main() {
     auto body1 = Body<1.0>{};
     auto body2 = Body<1.0>{};
     auto body3 = Body<1.0>{};
-    auto ham = make_ham(body1, body2, body3);
-    auto system = Hamiltonian::compile_system<3 * 2>(ham);
-    auto integrator = RungeKutta::make_brk<12>(2, 3, system);
-    auto inits = vector<Real>(12);
+    auto problem = make_planar_nbody(body1, body2, body3);
+    auto system = problem.compiled_system();
+    auto integrator = RungeKutta::make_brk<problem.NCoords>(2, 3, system);
+    auto inits = vector<Real>(problem.NCoords);
     inits[0] = 0.97000436;  // x1
     inits[1] = -0.24308753; // y1
     inits[2] = 0.0;         // x2
