@@ -5,7 +5,6 @@
 #include <boost/numeric/ublas/matrix_proxy.hpp>
 #include <boost/numeric/ublas/vector.hpp>
 #include <cstddef>
-#include <fstream>
 #include <newton.hpp>
 #include <precision.hpp>
 namespace RungeKutta {
