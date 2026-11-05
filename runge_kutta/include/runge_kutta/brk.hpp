@@ -3,6 +3,8 @@
 #include "rk4.hpp"
 #include <boost/numeric/ublas/io.hpp>
 #include <boost/numeric/ublas/matrix_proxy.hpp>
+#include <boost/numeric/ublas/vector.hpp>
+#include <cstddef>
 #include <fstream>
 #include <newton.hpp>
 #include <precision.hpp>
@@ -30,27 +32,11 @@ namespace detail {
     }
 
 } // namespace detail
-template <size_t n, typename Rhs>
+template <size_t k, size_t s, typename Rhs>
     requires IsRhs<Rhs>
 class BRK {
   public:
-    BRK(std::string path_to_data, int s, Rhs &&rhs)
-        : _rk4{std::forward<Rhs>(rhs)}, _rhs{std::forward<Rhs>(rhs)}, buf{n},
-          buf2{n} {
-        _s = s;
-        std::ifstream f(path_to_data);
-        f >> c;
-        f >> A;
-        f >> b;
-        f >> L;
-
-        K = matrix<Real>(n, c.size());
-        y = matrix<Real>(n, c.size());
-    }
-    BRK(int k, int s, Rhs &&rhs)
-        : _rk4{std::forward<Rhs>(rhs)}, _rhs{std::forward<Rhs>(rhs)}, buf{n},
-          buf2{n} {
-        _s = s;
+    BRK(size_t n, Rhs &&rhs) : _rhs{rhs}, _rk4{n, std::forward<Rhs>(rhs)} {
         auto N = k;
         vector<Real> roots1(N);
         Real pi = boost::math::constants::pi<Real>();
@@ -98,9 +84,12 @@ class BRK {
         this->L = L;
         K = matrix<Real>(n, c.size());
         y = matrix<Real>(n, c.size());
+        buf = vector<Real>{n};
+        buf2 = vector<Real>{n};
     }
     void Step(Real t, vector<Real> &x, Real h) {
         {
+            auto n = buf.size();
             if (_first_step) {
                 Prepare(t, x, h);
                 _first_step = false;
@@ -122,7 +111,7 @@ class BRK {
                 }
             }
 
-            for (int ss = 0; ss < _s; ss++) {
+            for (int ss = 0; ss < s; ss++) {
 
                 y = h * prod(K, A);
                 for (size_t i = 0; i < y.size2(); i++) {
@@ -148,7 +137,7 @@ class BRK {
 
   private:
     void Prepare(Real t, const vector<Real> &x, Real h) {
-        y = matrix<Real>(n, c.size());
+        y = matrix<Real>(buf.size(), c.size());
 
         for (size_t i = 0; i < c.size(); i++) {
             buf = x;
@@ -158,30 +147,23 @@ class BRK {
         }
     }
 
-    RK4<n, Rhs> _rk4;
     using CleanRhs = std::unwrap_ref_decay_t<Rhs>;
     CleanRhs _rhs;
-
+    RK4<Rhs> _rk4;
     matrix<Real> y;
     matrix<Real> K;
     matrix<Real> A;
     matrix<Real> L;
     vector<Real> b;
     vector<Real> c;
-    int _s;
     bool _first_step = true;
     vector<Real> buf;
     vector<Real> buf2;
 };
 
-template <size_t n, typename Rhs>
+template <size_t k, size_t s, typename Rhs>
     requires IsRhs<Rhs>
-auto make_brk(int k, int s, Rhs &&rhs) {
-    return BRK<n, Rhs>(k, s, std::forward<Rhs>(rhs));
-}
-template <size_t n, typename Rhs>
-    requires IsRhs<Rhs>
-auto make_brk(std::string path_to_data, int s, Rhs &&rhs) {
-    return BRK<n, Rhs>(path_to_data, s, std::forward<Rhs>(rhs));
+auto make_brk(size_t n, Rhs &&rhs) {
+    return BRK<k, s, Rhs>(n, std::forward<Rhs>(rhs));
 }
 } // namespace RungeKutta

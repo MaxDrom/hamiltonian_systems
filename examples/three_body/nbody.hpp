@@ -4,6 +4,7 @@
 #include <auto_diff_base.hpp>
 #include <auto_diff_expressions.hpp>
 #include <boost/mpl/size_fwd.hpp>
+#include <boost/numeric/ublas/vector.hpp>
 #include <utility>
 
 struct Nil {};
@@ -168,3 +169,6 @@ template <double... Masses>
 decltype(auto) make_general_nbody(Body<Masses>... args) {
     return NBodyProblem<3, Masses...>{};
 }
+
+void solveKeplerProblem(size_t primaryIdx, size_t bodyIdx,
+                        boost::numeric::ublas::vector<Real> &x, Real t);

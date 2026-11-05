@@ -64,8 +64,8 @@ decltype(auto) make_leapfrog_for_spv(const H &ham, h2_sovler &&h2) {
 template <size_t NFreedom, typename H, typename h2_sovler>
     requires IsExpression<H> && IsSolverFunctor<h2_sovler>
 decltype(auto) make_leapfrog_for_spq(const H &ham, h2_sovler &&h2) {
-    auto kinetic_part = detail::_make_potential_integrator<NFreedom>(
+    auto potential_part = detail::_make_potential_integrator<NFreedom>(
         ham, std::make_index_sequence<NFreedom>());
-    return make_leapfrog(kinetic_part, std::forward<h2_sovler>(h2));
+    return make_leapfrog(potential_part, std::forward<h2_sovler>(h2));
 }
 } // namespace Yoshida

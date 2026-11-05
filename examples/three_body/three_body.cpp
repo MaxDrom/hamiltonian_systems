@@ -1,7 +1,7 @@
 #include <boost/numeric/ublas/vector.hpp>
 #include <fstream>
 #include <ham.hpp>
-#include <ham_maker.hpp>
+#include <nbody.hpp>
 #include <numbers>
 #include <precision.hpp>
 #include <runge_kutta/brk.hpp>
@@ -13,7 +13,7 @@ int main() {
     auto body3 = Body<1.0>{};
     auto problem = make_planar_nbody(body1, body2, body3);
     auto system = problem.compiled_system();
-    auto integrator = RungeKutta::make_brk<problem.NCoords>(2, 3, system);
+    auto integrator = RungeKutta::make_brk<2, 3>(problem.NCoords, system);
     auto inits = vector<Real>(problem.NCoords);
     inits[0] = 0.97000436;  // x1
     inits[1] = -0.24308753; // y1

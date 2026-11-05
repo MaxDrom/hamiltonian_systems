@@ -1,11 +1,12 @@
 #pragma once
 #include "odesolver.hpp"
+#include <cstddef>
 namespace RungeKutta {
-template <size_t n, typename Rhs>
+template <typename Rhs>
     requires IsRhs<Rhs>
 class RK4 {
   public:
-    RK4(Rhs &&rhs)
+    RK4(size_t n, Rhs &&rhs)
         : _rhs{std::forward<Rhs>(rhs)}, k1{n}, k2{n}, k3{n}, k4{n} {};
     void Step(Real t, vector<Real> &x, Real h) {
         _rhs(t, x, k1);
@@ -26,6 +27,6 @@ class RK4 {
 template <size_t n, typename Rhs>
     requires IsRhs<Rhs>
 auto make_rk4(Rhs &&rhs) {
-    return RK4<n, Rhs>(std::forward<Rhs>(rhs));
+    return RK4<Rhs>(n, std::forward<Rhs>(rhs));
 }
 } // namespace RungeKutta
