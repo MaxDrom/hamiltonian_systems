@@ -24,9 +24,9 @@ class RK4 {
     vector<Real> k3;
     vector<Real> k4;
 };
-template <size_t n, typename Rhs>
+template <typename Rhs>
     requires IsRhs<Rhs>
-auto make_rk4(Rhs &&rhs) {
+inline auto make_rk4(size_t n, Rhs &&rhs) {
     return RK4<Rhs>(n, std::forward<Rhs>(rhs));
 }
 } // namespace RungeKutta
