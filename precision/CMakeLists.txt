@@ -1,6 +1,11 @@
 add_library(precision INTERFACE)
+
 if(DEFINED USE_MULTIPRECISION)
     target_compile_definitions(precision INTERFACE USE_MULTIPRECISION)
+    if(POLICY CMP0167)
+      cmake_policy(SET CMP0167 NEW)
+    endif()
+    find_package(Boost REQUIRED)
+    target_link_libraries(precision INTERFACE Boost::Headers)
 endif()
-
 target_include_directories(precision INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
