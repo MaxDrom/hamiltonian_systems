@@ -35,12 +35,12 @@ namespace detail {
         size_t mid = start + (end - start) / 2;
 #pragma omp task shared(left)
         {
-            left = reduce_seq(std::forward<Op>(binary_op), collection, start,
-                              mid, identity, depth + 1, max_depth);
+            left = reduce_seq(binary_op, collection, start, mid, identity,
+                              depth + 1, max_depth);
         }
 
-        right = reduce_seq(std::forward<Op>(binary_op), collection, mid, end,
-                           identity, depth + 1, max_depth);
+        right = reduce_seq(binary_op, collection, mid, end, identity, depth + 1,
+                           max_depth);
 
 #pragma omp taskwait
 
@@ -74,7 +74,7 @@ void for_i(Fn &&f, int start, int end) {
 
 #pragma omp parallel for num_threads(max_threads) schedule(dynamic, 10)
     for (size_t i = start; i < end; i++) {
-        std::invoke(std::forward<Fn>(f), i);
+        std::invoke(f, i);
     }
 }
 
@@ -86,7 +86,7 @@ void for_each(Fn &&f, U &collection) {
 
 #pragma omp parallel for num_threads(max_threads) schedule(dynamic, 10)
     for (size_t i = 0; i < N; i++) {
-        std::invoke(std::forward<Fn>(f), collection[i]);
+        std::invoke(f, collection[i]);
     }
 }
 } // namespace Parallel
