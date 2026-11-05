@@ -33,3 +33,5 @@ inline Real mp_sqrt(Real value) { return sqrt(value); }
 inline Real mp_pow(Real value, Real deg) { return pow(value, deg); }
 inline Real mp_max(Real a, Real b) { return a < b ? b : a; }
 #endif // USE_MULTIPRECISION
+
+inline Real mp_abs(Real value) { return mp_max(value, -value); }
