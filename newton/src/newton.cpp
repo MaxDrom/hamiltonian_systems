@@ -3,9 +3,7 @@
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/vector.hpp>
 #include <functional>
-#include <iostream>
 #include <newton.hpp>
-#include <omp.h>
 #include <precision.hpp>
 using namespace boost::numeric::ublas;
 namespace Newton {
@@ -15,9 +13,6 @@ void jacobi(matrix<Real> &jac, const vector<Real> &x,
     Real h = sqrt(std::numeric_limits<Real>::epsilon());
 
     int N = x.size();
-    int max_threads = std::min(N, omp_get_max_threads());
-
-#pragma omp parallel for num_threads(max_threads)
     for (size_t i = 0; i < N; i++) {
         auto x_copy = x;
         x_copy(i) += h;
@@ -76,7 +71,6 @@ int solve(vector<Real> &x,
             else
                 return 1;
         }
-        std::cout << norm_2(fx) << " " << fx << '\n';
         x -= damping * dx;
 
     } while (norm_2(dx) > 10 * std::max(h, norm_2(x) * h));
@@ -92,12 +86,12 @@ int solve(Real &x, std::function<Real(Real)> f) {
     do {
         fx = f(x);
         auto df = (f(x + h) - fx) / h;
-        if (abs(df) < std::numeric_limits<Real>::min() || df == 0)
+        if (std::abs(df) < std::numeric_limits<Real>::min() || df == 0)
             return 1;
         dx = -fx / df;
         x = x + dx;
 
-    } while (abs(dx) > 10 * mp_max(hh, abs(x) * hh));
+    } while (std::abs(dx) > 10 * mp_max(hh, std::abs(x) * hh));
 
     return 0;
 }
@@ -109,13 +103,13 @@ int solve(Real &x, std::function<Real(Real)> f, std::function<Real(Real)> df) {
     do {
         fx = f(x);
         auto dfx = df(x);
-        if (abs(dfx) < std::numeric_limits<Real>::min() || dfx == 0)
+        if (std::abs(dfx) < std::numeric_limits<Real>::min() || dfx == 0)
             return 1;
         dx = -fx / dfx;
         x = x + dx;
         // std::cout<<x<<" "<<dx<<'\n';
-    } while (abs(fx) > std::numeric_limits<Real>::min() &&
-             abs(dx) > std::numeric_limits<Real>::epsilon());
+    } while (std::abs(fx) > std::numeric_limits<Real>::min() &&
+             std::abs(dx) > std::numeric_limits<Real>::epsilon());
 
     return 0;
 }
@@ -134,7 +128,7 @@ Real find_minimum(Real a, Real b, std::function<Real(Real)> f) {
 
         x = (a + b) / 2;
 
-    } while ((b - a) > mp_max(eps, abs(x) * eps));
+    } while ((b - a) > mp_max(eps, std::abs(x) * eps));
 
     return x;
 }
