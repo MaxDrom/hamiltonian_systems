@@ -66,6 +66,6 @@ template <size_t NFreedom, typename H, typename h2_sovler>
 decltype(auto) make_leapfrog_for_spq(const H &ham, h2_sovler &&h2) {
     auto potential_part = detail::_make_potential_integrator<NFreedom>(
         ham, std::make_index_sequence<NFreedom>());
-    return make_leapfrog(potential_part, std::forward<h2_sovler>(h2));
+    return make_leapfrog(std::forward<h2_sovler>(h2), potential_part);
 }
 } // namespace Yoshida

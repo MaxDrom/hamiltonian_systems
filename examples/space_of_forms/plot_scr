@@ -1,0 +1,27 @@
+set terminal png size 1920,1080
+set output "plot.png"
+set parametric
+set urange [0:2*pi]
+set vrange [-pi/2:pi/2]
+set view equal xyz
+set isosamples 30
+
+# Включаем прозрачность (0.4 означает, что сфера заполнена лишь на 40%)
+set style fill transparent solid 0.4 noborder
+set pm3d depthorder
+
+# Настраиваем стили для кривой и точек
+# lw 3 — толстая линия для кривой (цвет синий)
+set style line 1 lc rgb "blue" lw 3  
+# pt 7 (заполненный круг), ps 3.5 (очень жирная точка, цвет красный)
+set style line 2 pt 7 ps 3.5 lc rgb "red" 
+
+unset key
+
+splot cos(u)*cos(v), sin(u)*cos(v), sin(v) with lines, \
+      'out.dat' using 1:2:3 with lines ls 1, \
+      "-" using 1:2:3 with points ls 2
+1.0          0.0          0.0
+-0.5         0.8660254    0.0
+-0.5        -0.8660254    0.0
+e
