@@ -68,7 +68,8 @@ struct DefaultFuncDiff : Expression<DefaultFuncDiff<A, Func, Idx>> {
     A _value;
 
     template <IsReal... Args> inline Real apply_impl(Args &&...args) const {
-        Real h = mp_sqrt(std::numeric_limits<Real>::epsilon());
+        using std::sqrt;
+        Real h = sqrt(std::numeric_limits<Real>::epsilon());
 
         auto args_tuple = std::make_tuple(args...);
 
@@ -93,23 +94,19 @@ template <typename A, typename Var, auto Func>
 concept HasAnalyticalDiff =
     requires { typename AnalyticalDiff<A, Func>::type; };
 
-template <IsExpression A>
-struct AnalyticalDiff<A, static_cast<Real (*)(Real)>(mp_sqrt)> {
+template <IsExpression A> struct AnalyticalDiff<A, (_adl_sqrt)> {
     using type = Mul<Constant<0.5>, Div<Constant<1.0>, Sqrt<A>>>;
 };
 
-template <IsExpression A>
-struct AnalyticalDiff<A, static_cast<Real (*)(Real)>(mp_cos)> {
+template <IsExpression A> struct AnalyticalDiff<A, (_adl_cos)> {
     using type = Mul<Integer<-1>, Sin<A>>;
 };
 
-template <IsExpression A>
-struct AnalyticalDiff<A, static_cast<Real (*)(Real)>(mp_sin)> {
+template <IsExpression A> struct AnalyticalDiff<A, (_adl_sin)> {
     using type = Cos<A>;
 };
 
-template <IsExpression A>
-struct AnalyticalDiff<A, static_cast<Real (*)(Real)>(mp_exp)> {
+template <IsExpression A> struct AnalyticalDiff<A, (_adl_exp)> {
     using type = Exp<A>;
 };
 

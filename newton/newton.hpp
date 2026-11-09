@@ -79,6 +79,8 @@ inline int solve(vector<Real> &x,
 }
 
 inline int solve(Real &x, std::function<Real(Real)> f) {
+    using std::abs;
+    using std::max;
     Real h = 2 * sqrt(std::numeric_limits<Real>::epsilon());
     Real dx;
     Real fx;
@@ -86,36 +88,38 @@ inline int solve(Real &x, std::function<Real(Real)> f) {
     do {
         fx = f(x);
         auto df = (f(x + h) - fx) / h;
-        if (mp_abs(df) < std::numeric_limits<Real>::min() || df == 0)
+        if (abs(df) < std::numeric_limits<Real>::min() || df == 0)
             return 1;
         dx = -fx / df;
         x = x + dx;
 
-    } while (mp_abs(dx) > 10 * mp_max(hh, mp_abs(x) * hh));
+    } while (abs(dx) > 10 * max(hh, abs(x) * hh));
 
     return 0;
 }
 
 inline int solve(Real &x, std::function<Real(Real)> f,
                  std::function<Real(Real)> df) {
-
+    using std::abs;
     Real dx;
     Real fx;
     do {
         fx = f(x);
         auto dfx = df(x);
-        if (mp_abs(dfx) < std::numeric_limits<Real>::min() || dfx == 0)
+        if (abs(dfx) < std::numeric_limits<Real>::min() || dfx == 0)
             return 1;
         dx = -fx / dfx;
         x = x + dx;
         // std::cout<<x<<" "<<dx<<'\n';
-    } while (mp_abs(fx) > std::numeric_limits<Real>::min() &&
-             mp_abs(dx) > std::numeric_limits<Real>::epsilon());
+    } while (abs(fx) > std::numeric_limits<Real>::min() &&
+             abs(dx) > std::numeric_limits<Real>::epsilon());
 
     return 0;
 }
 
 inline Real find_minimum(Real a, Real b, std::function<Real(Real)> f) {
+    using std::abs;
+    using std::max;
     Real phi = (sqrt(Real(5)) - Real(1)) / 2;
     Real c, d, x;
     Real eps = std::numeric_limits<Real>::epsilon();
@@ -129,7 +133,7 @@ inline Real find_minimum(Real a, Real b, std::function<Real(Real)> f) {
 
         x = (a + b) / 2;
 
-    } while ((b - a) > mp_max(eps, mp_abs(x) * eps));
+    } while ((b - a) > max(eps, abs(x) * eps));
 
     return x;
 }

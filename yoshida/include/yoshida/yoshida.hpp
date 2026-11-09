@@ -10,18 +10,18 @@ namespace detail {
     template <size_t order> class YoshidaCoeffs {
       public:
         inline static const std::tuple<Real, Real> values = []() {
-            Real x1 =
-                Real(1.0) / (2 - mp_pow(Real(2), Real(1) / Real(order - 1)));
+            using std::pow;
+            Real x1 = Real(1.0) / (2 - pow(Real(2), Real(1) / Real(order - 1)));
             Real x0 = Real(1) - 2 * x1;
 
             for (size_t i = 0; i < 10; i++) {
                 Real m11 = Real(1);
                 Real m12 = Real(2);
-                Real m21 = (order - 1) * mp_pow(x0, (order - 2));
-                Real m22 = 2 * (order - 1) * mp_pow(x1, (order - 2));
+                Real m21 = (order - 1) * pow(x0, (order - 2));
+                Real m22 = 2 * (order - 1) * pow(x1, (order - 2));
                 Real det = m11 * m22 - m12 * m21;
                 Real f1 = x0 + 2 * x1 - 1;
-                Real f2 = mp_pow(x0, (order - 1)) + 2 * mp_pow(x1, (order - 1));
+                Real f2 = pow(x0, (order - 1)) + 2 * pow(x1, (order - 1));
                 x0 -= (m22 * f1 - m12 * f2) / det;
                 x1 -= (-m21 * f1 + m11 * f2) / det;
             }

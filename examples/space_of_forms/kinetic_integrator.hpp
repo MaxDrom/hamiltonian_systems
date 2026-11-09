@@ -21,17 +21,17 @@ inline void kinetic_solver(Real t, vector<Real> &x, Real h) {
     Real x0[3] = {x[0], x[1], x[2]};
     Real p0[3] = {x[3], x[4], x[5]};
 
-    Real a = mp_sqrt(x0[0] * x0[0] + x0[1] * x0[1] + x0[2] * x0[2]);
+    Real a = sqrt(x0[0] * x0[0] + x0[1] * x0[1] + x0[2] * x0[2]);
     if (a == 0)
         return;
 
-    Real b = mp_sqrt(p0[0] * p0[0] + p0[1] * p0[1] + p0[2] * p0[2]);
+    Real b = sqrt(p0[0] * p0[0] + p0[1] * p0[1] + p0[2] * p0[2]);
     Real c = x0[0] * p0[0] + x0[1] * p0[1] + x0[2] * p0[2];
 
     Real Lx = x0[1] * p0[2] - x0[2] * p0[1];
     Real Ly = x0[2] * p0[0] - x0[0] * p0[2];
     Real Lz = x0[0] * p0[1] - x0[1] * p0[0];
-    Real d = mp_sqrt(Lx * Lx + Ly * Ly + Lz * Lz);
+    Real d = sqrt(Lx * Lx + Ly * Ly + Lz * Lz);
 
     Real tau = h;
     Real ab2 = a * b * b;
@@ -52,8 +52,8 @@ inline void kinetic_solver(Real t, vector<Real> &x, Real h) {
     Real u = 2 * ab2 * tau + c;
     Real r = (u * u + d * d) / ab2;
     Real phi = 2 * atan2(2 * ab2 * tau * d, d * d + u * c);
-    Real s = mp_sin(phi);
-    Real co = mp_cos(phi);
+    Real s = sin(phi);
+    Real co = cos(phi);
 
     Real A = (r / a) * co - (r * c / (a * d)) * s;
     Real B = (a * r / d) * s;

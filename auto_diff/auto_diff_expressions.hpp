@@ -72,6 +72,23 @@ struct FuntionTagFromFunc : FuntionTag<FuntionTagFromFunc<func>> {
     }
 };
 
+constexpr auto _adl_sin = [](auto &&x) {
+    using std::sin;
+    return sin(std::forward<decltype(x)>(x));
+};
+constexpr auto _adl_cos = [](auto &&x) {
+    using std::cos;
+    return cos(std::forward<decltype(x)>(x));
+};
+constexpr auto _adl_sqrt = [](auto &&x) {
+    using std::sqrt;
+    return sqrt(std::forward<decltype(x)>(x));
+};
+constexpr auto _adl_exp = [](auto &&x) {
+    using std::exp;
+    return exp(std::forward<decltype(x)>(x));
+};
+
 template <typename T>
 concept IsFunctionTag = std::is_base_of_v<FuntionTag<T>, T>;
 
@@ -97,32 +114,28 @@ struct Function : Expression<Function<A, FuncTag>> {
 };
 
 template <IsExpression Value>
-using Sin =
-    Function<Value, FuntionTagFromFunc<static_cast<Real (*)(Real)>(mp_sin)>>;
+using Sin = Function<Value, FuntionTagFromFunc<_adl_sin>>;
 
 template <IsExpression Value> static Sin<Value> sin(const Value &v) {
     return {};
 }
 
 template <IsExpression Value>
-using Cos =
-    Function<Value, FuntionTagFromFunc<static_cast<Real (*)(Real)>(mp_cos)>>;
+using Cos = Function<Value, FuntionTagFromFunc<_adl_cos>>;
 
 template <IsExpression Value> static Cos<Value> cos(const Value &v) {
     return {};
 }
 
 template <IsExpression Value>
-using Sqrt =
-    Function<Value, FuntionTagFromFunc<static_cast<Real (*)(Real)>(mp_sqrt)>>;
+using Sqrt = Function<Value, FuntionTagFromFunc<_adl_sqrt>>;
 
 template <IsExpression Value> static Sqrt<Value> sqrt(const Value &v) {
     return {};
 }
 
 template <IsExpression Value>
-using Exp =
-    Function<Value, FuntionTagFromFunc<static_cast<Real (*)(Real)>(mp_exp)>>;
+using Exp = Function<Value, FuntionTagFromFunc<_adl_exp>>;
 
 template <IsExpression Value> static Exp<Value> exp(const Value &v) {
     return {};

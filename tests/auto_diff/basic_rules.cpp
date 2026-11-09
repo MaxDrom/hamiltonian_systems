@@ -38,7 +38,7 @@ TEST_CASE("Product rule: d/dx(x * sin(x))") {
     auto expr = x * sin(x);
     auto dexpr = make_diff(expr, x);
     Real x0 = 1.5;
-    Real expected = mp_sin(std::move(x0)) + x0 * mp_cos(std::move(x0));
+    Real expected = sin(std::move(x0)) + x0 * cos(std::move(x0));
     CHECK(dexpr(x0) == doctest::Approx(expected));
 }
 

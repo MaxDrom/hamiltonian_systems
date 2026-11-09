@@ -24,8 +24,8 @@ int main() {
     auto f = std::ofstream("out.dat");
     RungeKutta::Integrate(inits, 0, 4 * std::numbers::pi, 0.001, integrator,
                           [&f](Real t, const vector<Real> &x) -> void {
-                              auto r = x[0] * x[0] + x[1] * x[1] + x[2] * x[2];
-                              r = mp_sqrt(r);
+                              Real r = x[0] * x[0] + x[1] * x[1] + x[2] * x[2];
+                              r = sqrt(r);
                               for (auto &v : x)
                                   f << v / r << " ";
                               f << "\n";

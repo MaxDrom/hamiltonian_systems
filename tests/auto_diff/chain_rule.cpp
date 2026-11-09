@@ -12,7 +12,7 @@ TEST_CASE("Chain rule: d/dx sin(x^2)") {
     for (int i = 0; i < 10; i++) {
         Real x0 = 2 * Real(3.14) / 10 * i;
         Real x2 = x0 * x0;
-        Real expected = mp_cos(std::move(x2)) * 2 * x0;
+        Real expected = cos(std::move(x2)) * 2 * x0;
         CHECK(dexpr(x0) == doctest::Approx(expected));
     }
 }
@@ -23,8 +23,8 @@ TEST_CASE("Nested chain rule: d/dx exp(sin(x^2))") {
     auto dexpr = make_diff(expr, x);
     Real x0 = 0.7;
     Real inner = x0 * x0;
-    Real expected = mp_exp(std::move(mp_sin(std::move(inner)))) *
-                    mp_cos(std::move(inner)) * 2 * x0;
+    Real expected =
+        exp(std::move(sin(std::move(inner)))) * cos(std::move(inner)) * 2 * x0;
     CHECK(dexpr(x0) == doctest::Approx(expected));
 }
 
