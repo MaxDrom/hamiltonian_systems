@@ -268,7 +268,7 @@ template <size_t N_iters, IsExpression Expr, IsExpression Init, size_t Idx>
 constexpr decltype(auto) newton_expr(Expr expr, Variable<Idx> var, Init init);
 ```
 
-Вычисляет $f' = \text{make\_diff}(expr, var)$, строит символьную карту $x \mapsto x - \dfrac{f(x)}{f'(x)}$ и применяет её `N_iters` раз к начальному выражению `init`, упрощая результат после каждой итерации.
+Вычисляет $f^\prime = make\_diff(expr, var)$, строит символьную карту $x \mapsto x - \dfrac{f(x)}{f'(x)}$ и применяет её `N_iters` раз к начальному выражению `init`, упрощая результат после каждой итерации.
 
 ### Отладка: `print()`
 
@@ -276,7 +276,7 @@ constexpr decltype(auto) newton_expr(Expr expr, Variable<Idx> var, Init init);
 
 ### Численные и аналитические производные
 
-Встроенные аналитические производные заданы для `sin`, `cos`, `sqrt`, `exp` — это специализации шаблона `AutoDiff::AnalyticalDiff`. Для любой другой функции дифференцирование по умолчанию выполняется **численно** — центральной разностью при вычислении, с шагом $h = \sqrt{\varepsilon}$, где $\varepsilon = $ `std::numeric_limits<Real>::epsilon()`:
+Встроенные аналитические производные заданы для `sin`, `cos`, `sqrt`, `exp` — это специализации шаблона `AutoDiff::AnalyticalDiff`. Для любой другой функции дифференцирование по умолчанию выполняется **численно** — центральной разностью при вычислении, с шагом $h = \sqrt{\varepsilon}$, где  $\varepsilon$ = `std::numeric_limits<Real>::epsilon()`:
 
 $$
 \frac{\partial F(v(x))}{\partial x} = \frac{F\big(v(x + h)\big) - F\big(v(x - h)\big)}{2h}
