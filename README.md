@@ -276,7 +276,7 @@ constexpr decltype(auto) newton_expr(Expr expr, Variable<Idx> var, Init init);
 
 ### Численные и аналитические производные
 
-Встроенные аналитические производные заданы для `sin`, `cos`, `sqrt`, `exp` — это специализации шаблона `AutoDiff::AnalyticalDiff`. Для любой другой функции дифференцирование по умолчанию выполняется **численно** — центральной разностью при вычислении, с шагом $h = \sqrt{\varepsilon}$, где $\varepsilon = \text{std::numeric\_limits<Real>::epsilon()}$:
+Встроенные аналитические производные заданы для `sin`, `cos`, `sqrt`, `exp` — это специализации шаблона `AutoDiff::AnalyticalDiff`. Для любой другой функции дифференцирование по умолчанию выполняется **численно** — центральной разностью при вычислении, с шагом $h = \sqrt{\varepsilon}$, где $\varepsilon = $ `std::numeric_limits<Real>::epsilon()`:
 
 $$
 \frac{\partial F(v(x))}{\partial x} = \frac{F\big(v(x + h)\big) - F\big(v(x - h)\big)}{2h}
@@ -299,7 +299,7 @@ struct AnalyticalDiff<A, static_cast<Real (*)(Real)>(my_func)> {
 }
 ```
 
-После этого `apply_function<my_func>(expr)` дифференцируется аналитически: выбирается перегрузка `Diff<Function<A, FuntionTagFromFunc<Func>>, Var>` с `AnalyticalDiff` (именно концепт `HasAnalyticalDiff` решает, какая ветка срабатывает), и производная строится по цепному правилу $A'(x)\cdot \text{my\_func}'(A)$. Без специализации срабатывает численная ветка `DefaultFuncDiff`.
+После этого `apply_function<my_func>(expr)` дифференцируется аналитически: выбирается перегрузка `Diff<Function<A, FuntionTagFromFunc<Func>>, Var>` с `AnalyticalDiff` (именно концепт `HasAnalyticalDiff` решает, какая ветка срабатывает), и производная строится по цепному правилу. Без специализации срабатывает численная ветка `DefaultFuncDiff`.
 
 **Контракт по функции.** `Func` в `apply_function` передаётся как константное выражение и запекается в тип `FuntionTagFromFunc<Func>`. Поэтому в механизм проходят только **stateless** вызываемые объекты: обычные функции и лямбды **без захвата**. Лямбда с захватом или функтор со состоянием не подойдут — у них нет значения-константы. Это прямое следствие zero-cost природы `auto_diff`: вызываемый объект нигде не хранится в рантайме, он существует только как часть типа.
 
